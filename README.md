@@ -1,13 +1,10 @@
-# MHS Freshman Volleyball — 2026 Match Clips
+# MHS Freshman Volleyball 2026
 
-GitHub Pages site for SidelineHD clips organized by match date and player.
+Static GitHub Pages archive of MHS Freshman Volleyball clips.
 
-## Current pages
-- `index.html` — season homepage
-- `2026-09-19.html` — September 19 clips with play type, set/score, opponent, and per-player play filters
+## Match pages
 
-## Adding future matches
-Use `YYYY-MM-DD.html` for each match date, add the new date to `index.html`, and commit the changes.
-GitHub will retain the complete revision history.
+- September 21, 2026 — vs Bridgeport — 10 players, 86 player-tagged clips
+- September 19, 2026 — 10 players, 431 player-tagged clips
 
-- Every clip offers SidelineHD and direct Backblaze video links.
+Each clip includes SidelineHD metadata and links to both the SidelineHD clip page and the direct video source. Player sections can be filtered by play type. The preferred video source is remembered in the browser.
