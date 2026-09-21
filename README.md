@@ -9,3 +9,5 @@ GitHub Pages site for SidelineHD clips organized by match date and player.
 ## Adding future matches
 Use `YYYY-MM-DD.html` for each match date, add the new date to `index.html`, and commit the changes.
 GitHub will retain the complete revision history.
+
+- Every clip offers SidelineHD and direct Backblaze video links.
