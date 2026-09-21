@@ -1,15 +1,11 @@
 # MHS Freshman Volleyball — 2026 Match Clips
 
-Static GitHub Pages site for organizing SidelineHD clips by match date and player.
+GitHub Pages site for SidelineHD clips organized by match date and player.
 
-## Site structure
+## Current pages
+- `index.html` — season homepage
+- `2026-09-19.html` — September 19 clips with play type, set/score, opponent, and per-player play filters
 
-- `index.html` — season homepage / list of match dates
-- `2026-09-19.html` — September 19, 2026 clips
-
-Future matches should use the same `YYYY-MM-DD.html` naming convention.
-
-When a new match is added:
-1. Add the new dated HTML page.
-2. Add a match-date link to `index.html`.
-3. Commit both files to preserve the site's history.
+## Adding future matches
+Use `YYYY-MM-DD.html` for each match date, add the new date to `index.html`, and commit the changes.
+GitHub will retain the complete revision history.
