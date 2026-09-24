@@ -4,6 +4,9 @@ Static GitHub Pages archive of MHS Freshman Volleyball clips.
 
 ## Match pages
 
+- September 23, 2026 — vs Phillip Barbour — 10 players, 130 player-tagged clips
+- September 23, 2026 — vs Wheeling Park — 10 players, 93 player-tagged clips
+
 - September 21, 2026 — vs Bridgeport — 10 players, 86 player-tagged clips
 - September 19, 2026 — 10 players, 431 player-tagged clips
 
