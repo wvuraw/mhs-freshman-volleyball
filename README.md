@@ -13,3 +13,5 @@ Static GitHub Pages archive of MHS Freshman Volleyball clips.
 Each clip includes SidelineHD metadata and links to both the SidelineHD clip page and the direct video source. Player sections can be filtered by play type. Multi-match dates can also be filtered by match. The preferred video source is remembered in the browser.
 
 - October 7, 2026: MHS vs UHS (Homecoming), 110 player-tagged clips across 10 players.
+
+October 12, 2026: Added 182 player-tagged clips for Preston County and Bridgeport JV (10 players).
