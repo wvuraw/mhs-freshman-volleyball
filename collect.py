@@ -167,18 +167,48 @@ def main():
     history_clips = sorted(history.values(), key=lambda c: (c.get("startTs") or 0, c.get("id", ""), c.get("playerId", "")), reverse=True)
     h = write_if_changed(DATA / "player-history.json", {"teamId": team_id, "clips": history_clips})
     historic_ids = sorted({str(c.get("teamId")) for c in history_clips if c.get("teamId")})
+    print(f"Historical team IDs in clip data: {len(historic_ids)}")
+    unresolved = []
     for historic_id in historic_ids:
         if historic_id in team_directory and team_directory[historic_id]:
             continue
         try:
             past = fetch_json(f"/v2/teams/{urllib.parse.quote(historic_id, safe='')}")
-            if isinstance(past, dict) and past.get("id") == historic_id:
-                name = past.get("name") or past.get("teamName") or past.get("displayName")
-                if isinstance(name, str) and name.strip():
-                    team_directory[historic_id] = name.strip()
+            if not isinstance(past, dict):
+                print(f"WARNING: Historical team {historic_id}: response type {type(past).__name__}", file=sys.stderr)
+                unresolved.append(historic_id)
+                continue
+            if past.get("id") != historic_id:
+                print(f"WARNING: Historical team {historic_id}: response ID mismatch; keys={sorted(past.keys())}", file=sys.stderr)
+                unresolved.append(historic_id)
+                continue
+            # Accept known team-label variants, but never substitute an organization name
+            # or guess a team name from a match title.
+            fields = ("name", "teamName", "displayName", "nameFull", "nameLong",
+                      "nameDisplay", "teamDisplayName", "nameTeam", "textName")
+            name = next((past[k].strip() for k in fields
+                         if isinstance(past.get(k), str) and past[k].strip()), None)
+            if not name and isinstance(past.get("team"), dict):
+                nested = past["team"]
+                name = next((nested[k].strip() for k in fields
+                             if isinstance(nested.get(k), str) and nested[k].strip()), None)
+            if name:
+                team_directory[historic_id] = name
+                print(f"Resolved historical team {historic_id}: {name}")
+            else:
+                unresolved.append(historic_id)
+                # Keys and short string-valued metadata only. Never log the complete team
+                # response: it may contain private fields such as an administrative PIN.
+                safe_metadata = {k: past[k][:100] for k in fields
+                                 if isinstance(past.get(k), str)}
+                print(f"WARNING: No team name for {historic_id}; "
+                      f"available fields={sorted(past.keys())}; "
+                      f"name candidates={safe_metadata}", file=sys.stderr)
         except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as exc:
+            unresolved.append(historic_id)
             print(f"WARNING: Could not resolve historical team {historic_id}: {exc}", file=sys.stderr)
         time.sleep(config.get("request_delay_seconds", 0.3))
+    print(f"Historical team IDs unresolved: {len(unresolved)}")
     d = write_if_changed(DATA / "teams.json", {"teams": team_directory})
     print(f"Historical teams resolved: {len(team_directory)} | Changed: {d}")
     print(f"Player history: {len(history_clips)} records | Changed: {h}")
