@@ -1,0 +1,75 @@
+{
+  "players": [
+    {
+      "claimedPlayerId": "Vyu6-CpSh01-kor-9oFaIPkMman0",
+      "id": "UVPT-TpSh01-kor-p2J4nErQCqqp",
+      "isActive": true,
+      "jerseyNum": "1",
+      "name": "Korinne Nastasi"
+    },
+    {
+      "claimedPlayerId": "UUqJ-CpSh01-gil-d70L0n0cEFaA",
+      "id": "Ip2T-TpSh01-gil-p95eRNKJhhkU",
+      "isActive": true,
+      "jerseyNum": "3",
+      "name": "Gillian Corwin"
+    },
+    {
+      "claimedPlayerId": "EcbY-CpSh01-mag-TY7f6BSO0Sq4",
+      "id": "X6RP-TpSh01-mag-o9Yc90C1pUl0",
+      "isActive": true,
+      "jerseyNum": "5",
+      "name": "Maggey Gibson"
+    },
+    {
+      "claimedPlayerId": "yIYB-CpSh01-ale-a5pbLyBlFDz2",
+      "id": "xwUF-TpSh01-ale-nHJwnQ8tHMF0",
+      "isActive": true,
+      "jerseyNum": "7",
+      "name": "Alexis Cunanan"
+    },
+    {
+      "claimedPlayerId": "",
+      "id": "rLR3-TpSh01-eli-e58FA98s1K2x",
+      "isActive": true,
+      "jerseyNum": "10",
+      "name": "Elise Rinehart"
+    },
+    {
+      "claimedPlayerId": "mm8Z-CpSh01-eli-6DX2nbanc7cF",
+      "id": "dASl-TpSh01-eli-F30tLY4PYq9z",
+      "isActive": true,
+      "jerseyNum": "11",
+      "name": "Elin Smyth"
+    },
+    {
+      "claimedPlayerId": "Q4Rs-CpSh01-ivy-l6YMkBJwY9Ck",
+      "id": "XTl7-TpSh01-ivy-scUdEKq8gpS2",
+      "isActive": true,
+      "jerseyNum": "14",
+      "name": "Ivy Martin"
+    },
+    {
+      "claimedPlayerId": "ZRS1-CpSh01-ken-PBCiznGcDHCy",
+      "id": "nCrH-TpSh01-ken-zIDbcOe8wEQk",
+      "isActive": true,
+      "jerseyNum": "15",
+      "name": "Kendall Street"
+    },
+    {
+      "claimedPlayerId": "zQvE-CpSh01-mad-RunSt1T7Ok05",
+      "id": "0MjP-TpSh01-mad-mZaJ7S7Y9vPG",
+      "isActive": true,
+      "jerseyNum": "17",
+      "name": "Madison Williams"
+    },
+    {
+      "claimedPlayerId": "6NHK-CpSh01-bro-G3B4EYCT83wd",
+      "id": "MSP3-TpSh01-bro-LC1Z5cL46f1q",
+      "isActive": true,
+      "jerseyNum": "25",
+      "name": "Brooke Harbert"
+    }
+  ],
+  "teamId": "2CnM-TmSh01-mhs-1C04l8PpMPT9"
+}
