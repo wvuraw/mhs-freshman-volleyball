@@ -2,6 +2,7 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MHS Freshman Volleyball — Highlights</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f6f8;color:#181818;font:16px Arial,Helvetica,sans-serif}header{background:#111;color:white;padding:30px 20px}header .wrap,main{max-width:980px;margin:auto}header h1{margin:0 0 7px;font-size:clamp(25px,5vw,40px)}header p{margin:0;color:#ddd}main{padding:25px 18px 60px}h2{font-size:22px;margin:22px 0 12px}h3{margin:0 0 5px;font-size:17px}.muted{color:#666;font-size:14px}.hidden{display:none!important}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:12px}.player,.match,.clip{background:#fff;border:1px solid #ddd;border-radius:13px;padding:16px}.player,.match{cursor:pointer;text-align:left;color:inherit;font:inherit}.player:hover,.match:hover{border-color:#777}.player{display:flex;align-items:center;gap:12px}.avatar{width:64px;height:64px;overflow:hidden;flex:none;display:grid;place-items:center;background:#e9edf0;border-radius:50%;font-weight:bold;color:#444}.avatar img{width:100%;height:100%;object-fit:cover}.match{width:100%;display:flex;align-items:center;justify-content:space-between;margin:10px 0;gap:12px}.match strong{font-size:18px}.clip{margin:10px 0;display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.clip .info{min-width:0}.actions{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.actions a{color:#1756a0;font-size:14px;font-weight:bold;white-space:nowrap}.tag{display:inline-block;background:#eef1f5;border-radius:6px;padding:4px 7px;margin:7px 5px 0 0;font-size:12px}.toolbar{display:flex;gap:12px;flex-wrap:wrap;margin:16px 0}.toolbar label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:#555}.toolbar select,.toolbar input,.back{border:1px solid #bbb;border-radius:9px;padding:10px;font:inherit;background:white}.back{cursor:pointer}.error{background:#fff0f0;color:#9b1c1c;padding:12px;border-radius:10px}.match-group{background:white;border:1px solid #ddd;border-radius:13px;margin:12px 0;overflow:hidden}.match-group summary{cursor:pointer;padding:15px 17px;font-weight:bold}.match-group summary .muted{font-weight:normal;display:block;margin-top:5px}.match-group .clip{border-radius:0;border-left:0;border-right:0;margin:0}.sub{font-size:13px;color:#777;margin-top:6px}@media(max-width:600px){.clip{flex-direction:column}.actions{justify-content:flex-start}.toolbar label,.toolbar select,.toolbar input{width:100%}}
+.match-player-filter{padding:12px 16px;border-top:1px solid #e4e6e8;background:#f8fafc}.match-player-filter label{font-size:14px;font-weight:600}.match-player-filter select{margin-left:8px;padding:8px;border:1px solid #bbb;border-radius:8px;background:white;font:inherit;max-width:100%}@media(max-width:600px){.match-player-filter label{display:flex;flex-direction:column;gap:6px}.match-player-filter select{margin-left:0;width:100%}}
 </style></head><body><header><div class="wrap"><h1>MHS Freshman Volleyball</h1><p>2026 match highlights · Player highlight history</p></div></header><main>
 <p id="status" class="muted">Loading highlights…</p>
 <section id="home"><h2>Players</h2><p class="muted">Select a player to browse available highlights from any team or season.</p><div id="players" class="grid"></div><h2>Match Dates</h2><p class="muted">Current MHS team games only.</p><div id="dates"></div></section>
@@ -36,6 +37,20 @@ function renderResults(){
    const title=state.view==='player'?(first.textMatchupName||opponent(state.gameMap.get(first.gameId)||{})):(first.textMatchupName||opponent(state.gameMap.get(first.gameId)||{}));
    summary.append(node('span','',title),node('span','muted',`${prettyDate(clipDate(first))} · ${teamName(first)} · ${group.length} highlight${group.length===1?'':'s'}`));
    wrapper.append(summary);
+   let matchPlayerFilter=null;
+   if(state.view==='date'){
+     const available=[...new Set(group.map(c=>c.playerName||'Player'))].sort((a,b)=>a.localeCompare(b));
+     if(available.length>1){
+       const filterBar=node('div','match-player-filter');
+       const label=node('label','','Player ');
+       matchPlayerFilter=node('select');
+       matchPlayerFilter.setAttribute('aria-label','Filter players in this match');
+       matchPlayerFilter.add(new Option('All players',''));
+       for(const name of available)matchPlayerFilter.add(new Option(name,name));
+       label.append(matchPlayerFilter);filterBar.append(label);wrapper.append(filterBar);
+     }
+   }
+   const clipCards=[];
    for(const c of group){const card=node('article','clip'),info=node('div','info');
      if(state.view!=='player')info.append(node('h3','',c.playerName||'Player'));
      for(const tag of tags(c))info.append(node('span','tag',tag));
@@ -43,8 +58,9 @@ function renderResults(){
      card.append(info);const actions=node('div','actions'),url=clipVideo(c);
      if(url){const view=node('a','','View clip ↗');view.href=url;view.target='_blank';view.rel='noopener noreferrer';actions.append(view);
        const download=node('a','','Download / Save');download.href=url;download.download=`volleyball-${c.id}.mp4`;download.target='_blank';download.rel='noopener noreferrer';download.title='If the video opens instead of downloading, use your browser’s Save video as option.';actions.append(download)}
-     else actions.append(node('span','muted','Video link unavailable'));card.append(actions);wrapper.append(card)
+     else actions.append(node('span','muted','Video link unavailable'));card.append(actions);wrapper.append(card);clipCards.push({card,name:c.playerName||'Player'})
    }
+   if(matchPlayerFilter)matchPlayerFilter.addEventListener('change',()=>{for(const item of clipCards)item.card.classList.toggle('hidden',!!matchPlayerFilter.value&&item.name!==matchPlayerFilter.value)});
    frag.append(wrapper)
  }
  $('results').append(frag)
