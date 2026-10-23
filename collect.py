@@ -79,8 +79,6 @@ def main():
     if not isinstance(games, list):
         raise ValueError("Unexpected games API response: expected a list")
     game_map = {g["id"]: g for g in games if isinstance(g, dict) and g.get("id")}
-    if not game_map:
-        raise ValueError("Team API returned no identifiable games; refusing to overwrite saved data")
 
     # Merge with prior saved data so incremental runs never discard earlier matches.
     previous = read_existing(DATA / "clips.json", {"clips": []})
@@ -89,6 +87,11 @@ def main():
         key = clip_key(clip["playerId"], clip["gameId"], clip["id"])
         merged[key] = clip
 
+    history_previous = read_existing(DATA / "player-history.json", {"clips": []})
+    history = {}
+    for clip in history_previous.get("clips", []):
+        if isinstance(clip, dict) and clip.get("id") and clip.get("playerId"):
+            history[clip_key(clip["playerId"], clip.get("gameId", ""), clip["id"])] = clip
     failures = []
     for player in roster:
         player_id = player["claimedPlayerId"]
@@ -108,17 +111,29 @@ def main():
                     raise ValueError("Unexpected clips response")
                 batch = result["clips"]
                 for raw in batch:
-                    if not isinstance(raw, dict) or raw.get("gameId") not in game_map or not raw.get("id"):
+                    if not isinstance(raw, dict) or not raw.get("id"):
                         continue
-                    key = clip_key(player_id, raw["gameId"], raw["id"])
-                    previous_clip = merged.get(key, {})
+                    game_id = raw.get("gameId") or ""
+                    key = clip_key(player_id, game_id, raw["id"])
+                    previous_clip = history.get(key, {})
                     tags = set(previous_clip.get("playTypes", []))
                     if raw.get("playType"):
-                        tags.add(raw["playType"])
-                    record = {**previous_clip, **raw, "playerId": player_id,
-                              "playerName": player["name"], "playTypes": sorted(tags)}
-                    merged[key] = record
-                    records += 1
+                        tags.add(str(raw["playType"]))
+                    # Store only public display fields, not the full upstream payload.
+                    record = {
+                        "id": raw["id"], "gameId": game_id, "playerId": player_id,
+                        "playerName": player["name"], "playTypes": sorted(tags),
+                        "startTs": raw.get("startTs") or previous_clip.get("startTs"),
+                        "textMatchupName": raw.get("textMatchupName") or previous_clip.get("textMatchupName") or "",
+                        "teamId": raw.get("teamId") or previous_clip.get("teamId") or "",
+                        "fileDownloadUrl": raw.get("fileDownloadUrl") or previous_clip.get("fileDownloadUrl") or "",
+                    }
+                    history[key] = record
+                    if game_id in game_map:
+                        old_clip = merged.get(key, {})
+                        team_tags = set(old_clip.get("playTypes", [])) | set(record["playTypes"])
+                        merged[key] = {**old_clip, **record, "playTypes": sorted(team_tags)}
+                        records += 1
                 pages += 1
                 next_cursor = result.get("next")
                 if next_cursor is None or not batch:
@@ -143,6 +158,9 @@ def main():
     r = write_if_changed(DATA / "roster.json", {"teamId": team_id, "players": roster})
     a = write_if_changed(DATA / "games.json", {"teamId": team_id, "games": games_out})
     b = write_if_changed(DATA / "clips.json", {"teamId": team_id, "clips": clips})
+    history_clips = sorted(history.values(), key=lambda c: (c.get("startTs") or 0, c.get("id", ""), c.get("playerId", "")), reverse=True)
+    h = write_if_changed(DATA / "player-history.json", {"teamId": team_id, "clips": history_clips})
+    print(f"Player history: {len(history_clips)} records | Changed: {h}")
     print(f"Team games: {len(game_map)} | Unique team/player clips: {len(clips)} | Changed: {r or a or b}")
     print(f"Roster: {len(roster)} players | Claimed: {sum(bool(p['claimedPlayerId']) for p in roster)} | Failed: {len(failures)}")
     if failures:

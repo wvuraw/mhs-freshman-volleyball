@@ -1,17 +1,15 @@
-# MHS SidelineHD automatic roster + clip collector
+# MHS player history pilot
 
-Uses undocumented public SidelineHD APIs (may change). Does not download video.
-Fetches team roster, team games, and clips for each claimed player; filters clips by team game IDs.
-Unclaimed players remain in `data/roster.json` but cannot be collected through the claimed-player endpoint.
-Individual player API errors are logged; previously saved clips are retained.
+Replace ONLY these three existing repository files:
 
-## Install
-Replace `collect.py`, `config.json`, and `.github/workflows/update-clips.yml` in your existing repository.
-Run the **Update SidelineHD clip data** GitHub Action manually once, then inspect
-`data/roster.json`, `data/games.json`, and `data/clips.json`.
-The workflow also runs every three hours. GitHub may delay scheduled jobs.
-The existing website HTML is not yet connected to these JSON files.
+- `index.html`
+- `collect.py`
+- `.github/workflows/update-clips.yml` (create/update via GitHub's file editor if hidden folders cannot be uploaded)
 
-## Cautions
-The first full-roster run may take several minutes. No authorization headers or team PINs are used.
-Clip tags are SidelineHD metadata, not independently verified statistics.
+Keep your existing `config.json` and existing `data/` folder.
+
+Run **Actions > Update SidelineHD clip data > Run workflow**. The first run writes `data/player-history.json`. The homepage will report an error until that file exists. Check the Action logs and GitHub repository before opening the site.
+
+The collector uses undocumented public SidelineHD API endpoints. It fetches all available volleyball clip metadata for claimed roster profiles and retains current-team match filtering. Historical team names are not reliably available from the known endpoint, so the UI labels unknown teams using their IDs rather than guessing. Video files are **not** stored on GitHub. The Download / Save link points to SidelineHD's `fileDownloadUrl`; cross-origin browser download restrictions or expired links may require the user to open the video and use Save video as, or may prevent downloads. Test on real clips.
+
+Clip metadata can include duplicate videos tagged for multiple players; deduplication is per player/game/clip ID. Player history is retained between runs; a new claim becomes available on the next collection. No private authorization credentials are needed.
