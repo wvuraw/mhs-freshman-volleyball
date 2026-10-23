@@ -1,0 +1,33 @@
+name: Update SidelineHD clip data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */3 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: sidelinehd-collector
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Collect public clip metadata
+        run: python collect.py
+      - name: Commit changed JSON data
+        run: |
+          if [ -n "$(git status --porcelain -- data/)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/games.json data/clips.json
+            git commit -m "Update SidelineHD clip data"
+            git push
+          else
+            echo "No data changes"
+          fi
