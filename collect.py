@@ -71,6 +71,8 @@ def main():
             "jerseyNum": p.get("jerseyNum", ""),
             "claimedPlayerId": p.get("claimedPlayerId") or "",
             "isActive": p.get("isActive", True),
+            "imageUrlSmall": p.get("imageUrlSmall") or "",
+            "imageUrl": p.get("imageUrl") or "",
         })
     if not roster:
         raise ValueError("Team roster empty; refusing to overwrite data")
@@ -92,6 +94,10 @@ def main():
     for clip in history_previous.get("clips", []):
         if isinstance(clip, dict) and clip.get("id") and clip.get("playerId"):
             history[clip_key(clip["playerId"], clip.get("gameId", ""), clip["id"])] = clip
+    # Resolve historical team names once per unique team, caching results between runs.
+    previous_directory = read_existing(DATA / "teams.json", {"teams": {}})
+    team_directory = dict(previous_directory.get("teams", {}))
+    team_directory[team_id] = team.get("name") or team.get("teamName") or "MHS Freshman 2026"
     failures = []
     for player in roster:
         player_id = player["claimedPlayerId"]
@@ -160,6 +166,21 @@ def main():
     b = write_if_changed(DATA / "clips.json", {"teamId": team_id, "clips": clips})
     history_clips = sorted(history.values(), key=lambda c: (c.get("startTs") or 0, c.get("id", ""), c.get("playerId", "")), reverse=True)
     h = write_if_changed(DATA / "player-history.json", {"teamId": team_id, "clips": history_clips})
+    historic_ids = sorted({str(c.get("teamId")) for c in history_clips if c.get("teamId")})
+    for historic_id in historic_ids:
+        if historic_id in team_directory and team_directory[historic_id]:
+            continue
+        try:
+            past = fetch_json(f"/v2/teams/{urllib.parse.quote(historic_id, safe='')}")
+            if isinstance(past, dict) and past.get("id") == historic_id:
+                name = past.get("name") or past.get("teamName") or past.get("displayName")
+                if isinstance(name, str) and name.strip():
+                    team_directory[historic_id] = name.strip()
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as exc:
+            print(f"WARNING: Could not resolve historical team {historic_id}: {exc}", file=sys.stderr)
+        time.sleep(config.get("request_delay_seconds", 0.3))
+    d = write_if_changed(DATA / "teams.json", {"teams": team_directory})
+    print(f"Historical teams resolved: {len(team_directory)} | Changed: {d}")
     print(f"Player history: {len(history_clips)} records | Changed: {h}")
     print(f"Team games: {len(game_map)} | Unique team/player clips: {len(clips)} | Changed: {r or a or b}")
     print(f"Roster: {len(roster)} players | Claimed: {sum(bool(p['claimedPlayerId']) for p in roster)} | Failed: {len(failures)}")
