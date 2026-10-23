@@ -25,7 +25,7 @@ jobs:
           if [ -n "$(git status --porcelain -- data/)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/games.json data/clips.json
+            git add data/games.json data/clips.json data/roster.json
             git commit -m "Update SidelineHD clip data"
             git push
           else
