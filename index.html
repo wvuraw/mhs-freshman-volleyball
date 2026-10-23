@@ -1,14 +1,50 @@
 <!DOCTYPE html>
-
-<html lang="en"><head><meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/><title>MHS Freshman Volleyball 2026</title>
-<style>*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f6f8;color:#171717}
-header{background:#111;color:#fff;padding:34px 20px}.wrap,main{max-width:900px;margin:auto}h1{margin:0 0 8px;font-size:clamp(26px,5vw,42px)}
-header p{margin:0;color:#d7d7d7}main{padding:25px 20px 50px}h2{font-size:20px}
-.match{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #ddd;border-radius:14px;padding:18px;text-decoration:none;color:#171717;margin-bottom:12px}
-.date{font-size:20px;font-weight:700}.details{font-size:14px;color:#666;margin-top:5px}.open{font-weight:700;white-space:nowrap}</style></head>
-<body><header><div class="wrap"><h1>MHS Freshman Volleyball</h1><p>2026 Match Clips</p></div></header>
-<main><h2>Match Dates</h2><a class="match" href="2026-10-19.html"><div><div class="date">October 19, 2026</div><div class="details">10 players · 100 player-tagged clips · @ Oakland Catholic · searchable by play type</div></div><div class="open">View clips →</div></a><a class="match" href="2026-10-12.html"><div><div class="date">October 12, 2026</div><div class="details">10 players · 182 player-tagged clips · @ Preston County and @ Bridgeport JV · filterable by match and play type</div></div><div class="open">View clips →</div></a><a class="match" href="2026-10-07.html"><div><div class="date">October 7, 2026</div><div class="details">10 players · 110 player-tagged clips · vs UHS (Homecoming) · searchable by play type</div></div><div class="open">View clips →</div></a><a class="match" href="2026-10-05.html"><div><div class="date">October 5, 2026</div><div class="details">10 players · 208 player-tagged clips · 3 matches · filterable by match and play type</div></div><div class="open">View clips →</div></a><a class="match" href="2026-09-23.html"><div><div class="date">September 23, 2026</div><div class="details">10 players · 223 player-tagged clips · 2 matches · filterable by match and play type</div></div><div class="open">View clips →</div></a><a class="match" href="2026-09-21.html"><div><div class="date">September 21, 2026</div><div class="details">10 players · 86 player-tagged clips · vs Bridgeport · searchable by play type</div></div><div class="open">View clips →</div></a><a class="match" href="2026-09-19.html"><div><div class="date">September 19, 2026</div>
-<div class="details">10 players · 431 player-tagged clips · searchable by play type</div></div><div class="open">View clips →</div></a>
-<a class="match" href="2026-09-08.html"><div><div class="date">September 8, 2026</div><div class="details">9 players · 104 player-tagged clips · @ UHS · searchable by play type</div></div><div class="open">View clips →</div></a>
-<!-- Future match dates go here. --></main></body></html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MHS Freshman Volleyball 2026</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f5f6f8;color:#171717}
+header{background:#111;color:#fff;padding:34px 20px}.wrap,main{max-width:900px;margin:auto}h1{margin:0 0 8px;font-size:clamp(26px,5vw,42px)}header p{margin:0;color:#d7d7d7}main{padding:25px 20px 50px}h2{font-size:20px}
+.match{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #ddd;border-radius:14px;padding:18px;text-decoration:none;color:#171717;margin-bottom:12px;width:100%;text-align:left;cursor:pointer;font:inherit}.match:hover,.clip:hover{border-color:#999}.date{font-size:20px;font-weight:700}.details{font-size:14px;color:#666;margin-top:5px}.open{font-weight:700;white-space:nowrap}
+.toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0 18px}.toolbar button,.toolbar select,.toolbar input{font:inherit;border:1px solid #bbb;border-radius:9px;padding:10px;background:#fff;max-width:100%}.toolbar button{cursor:pointer}.toolbar label{display:flex;flex-direction:column;gap:5px;font-size:13px;color:#555}.toolbar select{min-width:155px}.muted{color:#666;font-size:14px}.clip{background:#fff;border:1px solid #ddd;border-radius:12px;padding:15px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:12px}.clip strong{display:block}.clip a{color:#1457aa;font-weight:700;white-space:nowrap}.tag{display:inline-block;background:#eef1f5;border-radius:6px;padding:3px 7px;margin:5px 5px 0 0;font-size:12px}.error{color:#9b1c1c;background:#fff1f1;padding:14px;border-radius:10px}.hidden{display:none!important}#clips{margin-top:15px}
+@media(max-width:580px){.clip{align-items:flex-start;flex-direction:column}.open{font-size:14px}.toolbar label,.toolbar select{width:100%}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>MHS Freshman Volleyball</h1><p>2026 Match Clips</p></div></header>
+<main>
+<section id="datesView"><h2>Match Dates</h2><p id="status" class="muted">Loading match data…</p><div id="dates"></div></section>
+<section id="clipsView" class="hidden"><div class="toolbar"><button id="back" type="button">← All match dates</button></div><h2 id="selectedDate"></h2><p id="dateSummary" class="muted"></p><div class="toolbar">
+<label>Match<select id="gameFilter"><option value="">All matches</option></select></label>
+<label>Player<select id="playerFilter"><option value="">All players</option></select></label>
+<label>Play type<select id="typeFilter"><option value="">All play types</option></select></label>
+<label>Search<input id="searchFilter" type="search" placeholder="Search clips"></label>
+</div><p id="resultCount" class="muted"></p><div id="clips"></div></section>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const state = {games:[],clips:[],roster:[],byDate:new Map(),gameById:new Map(),selectedDate:null};
+// Schedule timestamps are stored as UTC epoch seconds. Display in the team's local timezone.
+const TZ='America/New_York';
+function localDateKey(ts){if(!Number.isFinite(Number(ts))||Number(ts)<=0)return null;const d=new Date(Number(ts)*1000);return new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit'}).format(d).replace(/(\d{2})\/(\d{2})\/(\d{4})/,'$3-$1-$2')}
+function displayDate(key){return new Date(key+'T12:00:00Z').toLocaleDateString('en-US',{timeZone:'UTC',month:'long',day:'numeric',year:'numeric'})}
+function gameTitle(g){return g.scoreOpponentName || g.nameOpponent || g.opponentName || g.textMatchupName || 'Match';}
+function clipUrl(c){const url=c.fileDownloadUrl;return typeof url==='string' && /^https:\/\//i.test(url) ? url : null}
+function create(tag,cls,content){const el=document.createElement(tag);if(cls)el.className=cls;if(content!==undefined)el.textContent=content;return el}
+function setOptions(select,entries,allLabel){select.replaceChildren(new Option(allLabel,''));entries.forEach(([value,label])=>select.add(new Option(label,value)))}
+function goToDates(){state.selectedDate=null;$('datesView').classList.remove('hidden');$('clipsView').classList.add('hidden');history.replaceState(null,'',location.pathname);window.scrollTo(0,0)}
+function openDate(key){state.selectedDate=key;$('datesView').classList.add('hidden');$('clipsView').classList.remove('hidden');$('selectedDate').textContent=displayDate(key);const games=state.byDate.get(key)||[];const dateClips=state.clips.filter(c=>games.some(g=>g.id===c.gameId));$('dateSummary').textContent=`${games.length} match${games.length===1?'':'es'} · ${dateClips.length} player-tagged clips`;
+setOptions($('gameFilter'),games.map(g=>[g.id,gameTitle(g)]),'All matches');
+const players=[...new Map(state.roster.map(p=>[p.claimedPlayerId,p]).filter(([id])=>id)).values()].sort((a,b)=>Number(a.jerseyNum)-Number(b.jerseyNum));
+setOptions($('playerFilter'),players.map(p=>[p.claimedPlayerId,`#${p.jerseyNum} ${p.name}`]),'All players');
+const tags=[...new Set(dateClips.flatMap(c=>c.playTypes||[c.playType]).filter(Boolean))].sort();setOptions($('typeFilter'),tags.map(t=>[t,t]),'All play types');$('searchFilter').value='';renderClips();history.replaceState(null,'','#date='+encodeURIComponent(key));window.scrollTo(0,0)}
+function renderClips(){const games=state.byDate.get(state.selectedDate)||[];const ids=new Set(games.map(g=>g.id));const game=$('gameFilter').value,player=$('playerFilter').value,type=$('typeFilter').value,q=$('searchFilter').value.toLowerCase().trim();const rows=state.clips.filter(c=>ids.has(c.gameId)&&(!game||c.gameId===game)&&(!player||c.playerId===player)&&(!type||(c.playTypes||[c.playType]).includes(type))&&(!q||[c.playerName,gameTitle(state.gameById.get(c.gameId)||{}),...(c.playTypes||[])].join(' ').toLowerCase().includes(q)));
+$('resultCount').textContent=`Showing ${rows.length} clip${rows.length===1?'':'s'}`;const root=$('clips');root.replaceChildren();if(!rows.length){root.append(create('p','muted','No clips match these filters.'));return}const frag=document.createDocumentFragment();for(const c of rows){const card=create('article','clip'),left=create('div'),playerName=c.playerName||state.roster.find(p=>p.claimedPlayerId===c.playerId)?.name||'Player';left.append(create('strong','',playerName));left.append(create('div','details',gameTitle(state.gameById.get(c.gameId)||{})));for(const tag of (c.playTypes||[c.playType]).filter(Boolean)){left.append(create('span','tag',tag))}card.append(left);const url=clipUrl(c);if(url){const link=create('a','','View clip →');link.href=url;link.target='_blank';link.rel='noopener noreferrer';card.append(link)}else card.append(create('span','muted','Link unavailable'));frag.append(card)}root.append(frag)}
+function renderDates(){const root=$('dates');root.replaceChildren();const dates=[...state.byDate.keys()].sort().reverse();$('status').textContent=`${dates.length} match dates · ${state.games.length} scheduled games · ${state.clips.length} player-tagged clips`;for(const key of dates){const games=state.byDate.get(key),ids=new Set(games.map(g=>g.id)),clips=state.clips.filter(c=>ids.has(c.gameId));const button=create('button','match'),left=create('div'),right=create('div','open','View clips →');left.append(create('div','date',displayDate(key)));left.append(create('div','details',`${games.length} match${games.length===1?'':'es'} · ${clips.length} player-tagged clips · ${games.map(gameTitle).join(' / ')}`));button.append(left,right);button.addEventListener('click',()=>openDate(key));root.append(button)}if(!dates.length)root.append(create('p','muted','No scheduled games found.'))}
+async function load(){try{const [g,c,r]=await Promise.all(['data/games.json','data/clips.json','data/roster.json'].map(async path=>{const res=await fetch(path,{cache:'no-cache'});if(!res.ok)throw new Error(`${path}: HTTP ${res.status}`);return res.json()}));if(!Array.isArray(g.games)||!Array.isArray(c.clips)||!Array.isArray(r.players))throw new Error('Unexpected data format');state.games=g.games;state.clips=c.clips;state.roster=r.players;state.gameById=new Map(state.games.map(game=>[game.id,game]));for(const game of state.games){const key=localDateKey(game.scheduleTsStart);if(!key)continue;if(!state.byDate.has(key))state.byDate.set(key,[]);state.byDate.get(key).push(game)}renderDates();const key=new URLSearchParams(location.hash.slice(1)).get('date');if(key&&state.byDate.has(key))openDate(key)}catch(err){$('status').className='error';$('status').textContent=`Unable to load match data: ${err.message}. Confirm the data files exist and GitHub Pages is serving this repository.`;console.error(err)}}
+$('back').addEventListener('click',goToDates);['gameFilter','playerFilter','typeFilter','searchFilter'].forEach(id=>$(id).addEventListener('input',renderClips));window.addEventListener('hashchange',()=>{const key=new URLSearchParams(location.hash.slice(1)).get('date');if(key&&state.byDate.has(key))openDate(key);else if(!key)goToDates()});load();
+</script>
+</body></html>
